@@ -11,11 +11,7 @@ import sys
 from nltk.model import NgramModel
 from memoize import memoize
 
-cost_rem = 2
-cost_sub = 3
-cost_add = 2
-cost_flp = 3
-cost_nop = 0
+def_costs = {'rem' : 2, 'sub' : 3, 'add' : 2, 'flp' : 3, 'nop' : 0}
 
 def _main():
     print(correct_file(sys.argv[1]))
@@ -52,7 +48,10 @@ class memoize(dict):
         return result
 
 @memoize
-def edit_distance(str_src, str_tar):
+def edit_distance(str_src, str_tar, 
+        cost_add = def_costs['add'], cost_sub = def_costs['sub'],
+        cost_flp = def_costs['flp'], cost_rem = def_costs['rem'],
+        cost_nop = def_costs['nop']):
     len_src = len(str_src)
     len_tar = len(str_tar)
     if len_src == 0:
@@ -61,7 +60,7 @@ def edit_distance(str_src, str_tar):
         return len_src * cost_rem
     else:
         dist_add = edit_distance(str_src, str_tar[:-1]) + cost_add
-        dist_rem = edit_distance(str_src[:-1], str_tar) + cost_sub
+        dist_rem = edit_distance(str_src[:-1], str_tar) + cost_rem
         dist_sub = edit_distance(str_src[:-1], str_tar[:-1]) + cost_sub if len_src == len_tar else sys.maxint
         dist_flp = edit_distance(str_src[:-2], str_tar[:-2]) + cost_flp if reversed(str_src[-2:]) == str_tar[-2:] else sys.maxint
         dist_nop = edit_distance(str_src[:-1], str_tar[:-1]) + cost_nop if str_src[-1] == str_tar[-1] else sys.maxint
