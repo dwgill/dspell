@@ -40,6 +40,17 @@ def correct_lines(lines):
 def correct_spelling(word):
     return word
 
+class memoize(dict):
+    def __init__(self, func):
+        self.func = func 
+
+    def __call__(self, *args):
+        return self[args]
+
+    def __missing__(self, key):
+        result = self[key] = self.func(*key)
+        return result
+
 @memoize
 def edit_distance(str_src, str_tar):
     len_src = len(str_src)
