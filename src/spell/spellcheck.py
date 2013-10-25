@@ -6,7 +6,6 @@ Crated on Oct 15, 2013
 '''
 
 import nltk
-from memoize import memoize
 import sys
 
 costs = {'rem' : 1.0, 'sub' : 1.5, 'add' : 1.0, 'flp' : 1.5, 'nop' : 0.0}
