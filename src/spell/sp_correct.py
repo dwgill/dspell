@@ -8,12 +8,6 @@ Crated on Oct 15, 2013
 import nltk
 import sys
 
-costs = {'rem' : 1.0, 'sub' : 1.5, 'add' : 1.0, 'flp' : 1.5, 'nop' : 0.0}
-
-def avg_cost():
-    values = costs.values()
-    return reduce(lambda x, y: x*y, values) / float(len(values))
-
 def _main():
     if len(sys.argv) < 2:
         print("Please provide a file to correct.")
