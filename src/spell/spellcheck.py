@@ -2,7 +2,7 @@
 '''
 Crated on Oct 15, 2013
 
-@author: tvandrun
+@author: Daniel Gill
 '''
 
 import nltk
