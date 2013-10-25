@@ -25,7 +25,7 @@ class EditDistance(dict):
         return result
 
     def __missing__(self, key):
-        result = self[key] = self.calc_edit_dist(*key)
+        result = self[key] = self._calc_edit_dist(*key)
         return result
 
     def avg_cost(self):
@@ -33,7 +33,7 @@ class EditDistance(dict):
         return reduce(lambda x, y: x+y, costs) / float(len(values))
 
 
-    def calc_edit_dist(self, str_src, str_tar):
+    def _calc_edit_dist(self, str_src, str_tar):
         # Get the length of the strings.
         len_src = len(str_src)
         len_tar = len(str_tar)
