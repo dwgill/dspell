@@ -4,9 +4,6 @@ Created on Oct 24, 2013
 @author: Daniel Gill
 '''
 
-from nltk.probability import FreqDist
-import sys
-
 costs = {'rem' : 1.0, 'sub' : 1.5, 'add' : 1.0, 'flp' : 1.5, 'nop' : 0.0}
 
 class EDCalc(dict):
