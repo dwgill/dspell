@@ -62,11 +62,11 @@ class EDCalc(dict):
 
             # Transposition
             if reversed(str_src[-2:]) == str_tar[-2:]:
-                inlcude(dist_flp = self[(str_src[:-2], str_tar[:-2])] + self.cost_flp)
+                inlcude(self[(str_src[:-2], str_tar[:-2])] + self.cost_flp)
 
             # No operation
             if str_src[-1] == str_tar[-1]:
-                include(dist_nop = self[(str_src[:-1], str_tar[:-1])] + self.cost_nop)
+                include(self[(str_src[:-1], str_tar[:-1])] + self.cost_nop)
 
             return min(distances)
 
