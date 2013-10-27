@@ -9,7 +9,7 @@ import sys
 
 costs = {'rem' : 1.0, 'sub' : 1.5, 'add' : 1.0, 'flp' : 1.5, 'nop' : 0.0}
 
-class EditDistance(dict):
+class EDCalc(dict):
     def __init__(self, cost_add = costs['add'], cost_rem = costs['rem'],
             cost_sub = costs['sub'], cost_flp = costs['flp'],
             cost_nop = costs['nop']):
@@ -19,7 +19,7 @@ class EditDistance(dict):
         self.cost_flp = cost_flp
         self.cost_nop = cost_nop
 
-    def __call__(self, *args):
+    def edit_distance(self, *args):
         result = self[args]
         self.clear()
         return result
@@ -29,7 +29,7 @@ class EditDistance(dict):
         return result
 
     def avg_cost(self):
-        costs= (self.cost_add, self.cost_flp, self.cost_nop, self.cost_rem, self.cost_sub)
+        costs = (self.cost_add, self.cost_flp, self.cost_nop, self.cost_rem, self.cost_sub)
         return reduce(lambda x, y: x+y, costs) / float(len(values))
 
 
@@ -37,6 +37,7 @@ class EditDistance(dict):
         # Get the length of the strings.
         len_src = len(str_src)
         len_tar = len(str_tar)
+
         if len_src == 0:
             # If the source string is zero, then the transformation is going to be len_tar number of additions.
             return len_tar * self.cost_add
