@@ -28,6 +28,7 @@ class EDCalc(dict):
         result = self[key] = self._calc_edit_dist(*key)
         return result
 
+    @property
     def avg_cost(self):
         costs = (self.cost_add, self.cost_flp, self.cost_nop, self.cost_rem, self.cost_sub)
         return sum(costs) / float(len(values))
