@@ -35,40 +35,38 @@ class EDCalc(dict):
 
 
     def _calc_edit_dist(self, str_src, str_tar):
-        # Get the length of the strings.
         len_src = len(str_src)
         len_tar = len(str_tar)
 
+        # Source is empty string
         if len_src == 0:
-            # If the source string is zero, then the transformation is going to be len_tar number of additions.
             return len_tar * self.cost_add
 
+        # Target is empty string
         elif len_tar == 0:
-            # If the target string is zero, then the transformation is going to be len_src number of deletions.
             return len_src * self.cost_rem
 
+        # Target & Source are not empty
         else:
-            # How much would it cost if we transformed str_src into str_tar[:-1] and then added str_tar[-1] afterwards?
-            dist_add = self[(str_src, str_tar[:-1])] + self.cost_add
+            distances = []
+            include = lambda item: distances.append(item)
 
-            # How much would it cost if we deleted str_src[-1] and then transformed str_src[:-1] into str_tar?
-            dist_rem = self[(str_src[:-1], str_tar)] + self.cost_rem
+            # Addition
+            include(self[(str_src, str_tar[:-1])] + self.cost_add)
 
-            # How much would it cost if we replaced str_src[-1] with str_tar[-1] and then transformed str_src[:-1] into str_tar[:-1]?
-            dist_sub = self[(str_src[:-1], str_tar[:-1])] + self.cost_sub
+            # Deletion
+            include(self[(str_src[:-1], str_tar)] + self.cost_rem)
 
-            # If str_src[-2:] is reversed(str_tar[-2:]), then what does it cost to flip str_src[-2:] and transform str_src[:-2] into str_tar[:-2]
+            # Substitution
+            include(self[(str_src[:-1], str_tar[:-1])] + self.cost_sub)
+
+            # Transposition
             if reversed(str_src[-2:]) == str_tar[-2:]:
-                dist_flp = self[(str_src[:-2], str_tar[:-2])] + self.cost_flp
-            else:
-                dist_flp = sys.maxint
+                inlcude(dist_flp = self[(str_src[:-2], str_tar[:-2])] + self.cost_flp)
 
-            # If the last characters of both strings are the same, then what does it cost to ignore them and transform str_src[:-1] into str_tar[:-1]
+            # No operation
             if str_src[-1] == str_tar[-1]:
-                dist_nop = self[(str_src[:-1], str_tar[:-1])] + self.cost_nop
-            else:
-                dist_nop = sys.maxint
+                include(dist_nop = self[(str_src[:-1], str_tar[:-1])] + self.cost_nop)
 
-            # Return the smallest cost found.
-            return min(dist_add, dist_rem, dist_sub, dist_flp, dist_nop)
+            return min(distances)
 
