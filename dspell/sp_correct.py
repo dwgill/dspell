@@ -25,45 +25,50 @@ Crated on Oct 15, 2013
 @author: Daniel Gill
 '''
 
-import nltk
 import sys
+import os
+import sp_corpus
+from collections import namedtuple
+from bigram import Bigram
+
+WordCorrection = namedtuple('WordCorrection', ['original', 'corrected'])
 
 def _main():
-    if len(sys.argv) < 2:
-        print("Please provide a file to correct.")
-    elif len(sys.argv) > 2:
-        for param in sys.argv[2:]:
-            if '=' not in param:
-                continue
+    if 1 < len(sys.arv[1:]) < 3:
+        print("Improper format. Please give mode (file/dir/line) + data")
+        return
 
-            param_name, param_val = param.split('=')
-            for op in costs.keys():
-                if op in param_name:
-                    costs[op] = float(param_val)
-                    break
+    mode, data = sys.argv[1:]
+    mode = mode.lower()
 
-    print(correct_file(sys.argv[1]))
+    # Data given is file path.
+    if mode == 'file':
+        if not os.path.isfile(data):
+            print('provided path is not to a file.')
+            return
+        correct_words(sp_corpus.process_file(data))
 
-def correct_file(file_path):
-    with open(file_path) as opened_file:
-        return correct_lines(opened_file)
+    # Data given is directory path.
+    elif mode == 'dir':
+        if not os.path.isdir(data):
+            print('provided path is not to a directory.')
+            return
+        correct_words(sp_corpus.process_dir(data))
 
-def correct_lines(lines):
-    corrected_lines = []
-    for line in lines:
-        tokens_raw = nltk.word_tokenize(line)
-        corrected_line = ''
-        for word in tokens_raw:
-            if word.isalpha():
-                corrected_line += correct_spelling(word) + ' '
-            else:
-                corrected_line += word + ' '
-        corrected_lines.append(corrected_line)
-    return corrected_lines
+    # Data given is string.
+    else:
+        correct_words(sp_corpus.tokenize(data))
 
-# TO BE IMPLEMENTED
-def correct_spelling(word):
-    return word
+
+def correct_words(words):
+    previous_word = None
+    for current_word in words:
+        current_pair = Bigram(current=current_word, previous=previous_word)
+        yield correct_word(current_pair)
+        previous_word = current_word
+
+def correct_word(bigram):
+    pass
 
 if __name__ == "__main__":
     _main()

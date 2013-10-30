@@ -24,9 +24,5 @@ Created on Oct 30, 2013
 
 @author: Daniel Gill
 '''
-
-import nltk
-from nltk.probability import FreqDist
-
-def prob_of(token):
-    pass
+from collections import namedtuple
+Bigram = namedtuple('Bigram', ['current', 'previous'])
