@@ -27,6 +27,9 @@ Created on Oct 30, 2013
 
 import nltk
 from nltk.probability import FreqDist
+from nltk.probability import SimpleGoodTuringProbDist
 
-def prob_of(token):
+corpus = ['bob', 'bill', 'jill']
+
+def get_sgt():
     pass
