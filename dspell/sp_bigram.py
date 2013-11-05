@@ -25,4 +25,4 @@ Created on Oct 30, 2013
 @author: Daniel Gill
 '''
 from collections import namedtuple
-Bigram = namedtuple('Bigram', ['current', 'previous'])
+Bigram = namedtuple('Bigram', ['previous','current'])

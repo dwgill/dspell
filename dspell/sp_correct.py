@@ -33,6 +33,8 @@ from bigram import Bigram
 
 WordCorrection = namedtuple('WordCorrection', ['original', 'corrected'])
 
+tolerable_distance = 5
+
 def _main():
     if 1 < len(sys.arv[1:]) < 3:
         print("Improper format. Please give mode (file/dir/line) + data")

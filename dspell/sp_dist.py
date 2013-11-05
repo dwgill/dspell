@@ -2,8 +2,8 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining 
 # a copy of this software and associated documentation files 
-# (the "Software"), to deal in the Software without restriction, 
 # including without limitation the rights to use, copy, modify, merge, 
+# (the "Software"), to deal in the Software without restriction, 
 # publish, distribute, sublicense, and/or sell copies of the Software, 
 # and to permit persons to whom the Software is furnished to do so, 
 # subject to the following conditions:
@@ -25,7 +25,7 @@ Created on Oct 24, 2013
 @author: Daniel Gill
 '''
 
-costs = {'rem' : 1.0, 'sub' : 1.5, 'add' : 1.0, 'flp' : 1.5, 'nop' : 0.0}
+costs = {'rem' : 2, 'sub' : 3, 'add' : 2, 'flp' : 3, 'nop' : 0.0}
 
 class EDCalc(dict):
     def __init__(self, cost_add = costs['add'], cost_rem = costs['rem'],
@@ -39,16 +39,15 @@ class EDCalc(dict):
 
     def edit_distance(self, str_src, str_tar):
         result = self[(str_src, str_tar)]
-        self.clear()
         return result
 
     def __missing__(self, key):
         result = self[key] = self._calc_edit_dist(*key)
         return result
 
-    @property
     def avg_cost(self):
-        costs = (self.cost_add, self.cost_flp, self.cost_nop, self.cost_rem, self.cost_sub)
+        costs = (self.cost_add, self.cost_flp, 
+                self.cost_nop, self.cost_rem, self.cost_sub)
         return sum(costs) / float(len(values))
 
 

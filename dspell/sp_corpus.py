@@ -28,11 +28,14 @@ Created on Oct 24, 2013
 import re
 import os
 
-token_re = "[a-zA-Z]+('[a-zA-Z]+)?"
+# token_re = r"[a-zA-Z]+('[a-zA-Z]+)?"
+# token_re = r"[^\w((?<=\w)'(?=\w))]"
+token_re = r"[\W\d_]+"
 
 def tokenize(line):
-    for match in re.finditer(token_re, line):
-        yield match.string.lower()
+    for string in re.split(token_re, line):
+        if len(string) > 1 or string in ['I','a']:
+            yield string.lower()
 
 def process_file(file_path):
     with open(name=file_path, mode='r') as open_file:
@@ -42,5 +45,5 @@ def process_file(file_path):
 
 def process_dir(dir_path):
     for file_path in os.listdir(dir_path):
-        for word in process_file(file_path):
+        for word in process_file(os.path.join(dir_path, file_path)):
             yield word
