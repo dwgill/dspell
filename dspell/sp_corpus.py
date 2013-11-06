@@ -30,11 +30,27 @@ import os
 
 # token_re = r"[a-zA-Z]+('[a-zA-Z]+)?"
 # token_re = r"[^\w((?<=\w)'(?=\w))]"
-token_re = r"[\W\d_]+"
+# token_re = r"[a-zA-Z(\B'\B)]+"
+token_re = r"(\w+'\w+)|(\w+)"
 
 def tokenize(line):
-    for string in re.split(token_re, line):
-        if len(string) > 1 or string in ['I','a']:
+    was_contraction_last_time = False
+    def has_valid_contraction(tup):
+        return len(tup[0]) > 0
+
+    for matching_tuple in re.findall(token_re, line):
+        if was_contraction_last_time:
+            was_contraction_last_time = False
+            continue
+
+        string = ""
+        if has_valid_contraction(matching_tuple):
+            string = matching_tuple[0]
+            was_contraction_last_time = True
+        else:
+            string = matching_tuple[1]
+
+        if len(string) > 1 or string in ['I', 'a']:
             yield string.lower()
 
 def process_file(file_path):

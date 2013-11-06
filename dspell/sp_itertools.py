@@ -20,39 +20,34 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 '''
-Created on Nov 2, 2013
+Created on Nov 6, 2013
 
 @author: Daniel Gill
 '''
+from itertools import islice
 
-import nltk
-from nltk.probability import FreqDist as FD
-from nltk.probability import SimpleGoodTuringProbDist as SGT
-from sp_bigram import Bigram
+def tri_iter(seq, strict=True):
+    first_three = list(islice(seq, 3))
+    if len(first_tree) == 3:
+        first, second, third = first_three
+        yield (first, second, third)
+        for next_word in seq:
+            first, second, third = second, third, next_word
+            yield (first, second, third)
+    elif not strict:
+        yield tuple(first_three)
 
-def get_sgts_tokens(tokens):
-    uni_fd, bi_fd = FD(), FD()
-    p_token = 'the'
-    for c_token in tokens:
-        uni_fd.inc(c_token)
-        bi_fd.inc(Bigram(previous=p_token, current=c_token))
-        p_token = c_token
-    return ProbCalc(SGT(uni_fd), SGT(bi_fd))
+def bi_iter(seq, strict=True):
+    first_two = list(islice(seq, 2))
+    if len(first_two) == 2:
+        first, second = first_two
+        yield (first, second)
+        for next_word in seq:
+            first, second = second, next_word
+            yield first, second
+    elif not strict:
+        yield tuple(first_two)
 
-def get_sgts_fds(uni_fd, bi_fd):
-    return ProbCalc(SGT(uni_fd), SGT(bi_fd))
-
-class ProbCalc(object):
-    def __init__(self, uni_pd, bi_pd):
-        self.uni_pd = uni_pd
-        self.bi_pd = bi_pd
-
-    def prob_unigram(self, unigram):
-        return self.uni_pd.prob(unigram)
-
-    def prob_bigram(self, bigram):
-        return self.bi_pd.prob(bigram)
-
-    def prob_c_given_p(self, c, p):
-        pc = Bigram(current=c, previous=p)
-        return self.prob_bigram(pc) / self.prob_unigram(p)
+def uni_iter(seq):
+    for item in seq:
+        yield (item,)

@@ -27,16 +27,18 @@ Crated on Oct 15, 2013
 
 import sys
 import os
-import sp_corpus
+import sp_corpus, sp_prob, sp_dist
 from collections import namedtuple
-from bigram import Bigram
+from itertools import islice
 
-WordCorrection = namedtuple('WordCorrection', ['original', 'corrected'])
+tolerable_distance = 6
+tolerable_prob = 0.001
+dist_calc = sp_dist.EDCalc()
+prob_calc = sp_prob.ProbCalc()
+get_words = prob_calc.uni_pd.freqdist().iterkeys
 
-tolerable_distance = 5
-
-def _main():
-    if 1 < len(sys.arv[1:]) < 3:
+def main():
+    if 1 < len(sys.argv[1:]) < 2:
         print("Improper format. Please give mode (file/dir/line) + data")
         return
 
@@ -48,29 +50,49 @@ def _main():
         if not os.path.isfile(data):
             print('provided path is not to a file.')
             return
-        correct_words(sp_corpus.process_file(data))
+        print_words(correct_words(sp_corpus.process_file(data)))
 
     # Data given is directory path.
     elif mode == 'dir':
         if not os.path.isdir(data):
             print('provided path is not to a directory.')
             return
-        correct_words(sp_corpus.process_dir(data))
+        print_words(correct_words(sp_corpus.process_dir(data)))
 
     # Data given is string.
-    else:
-        correct_words(sp_corpus.tokenize(data))
+    elif mode == 'str':
+        print_words(correct_words(sp_corpus.tokenize(data)))
 
+    else:
+        print("Unrecognized mode.")
+
+def print_words(words):
+    print " ".join(words)
+
+def correct_string(string):
+    return " ".join(correct_words(sp_corpus.tokenize(string)))
 
 def correct_words(words):
     previous_word = None
     for current_word in words:
         current_pair = Bigram(current=current_word, previous=previous_word)
-        yield correct_word(current_pair)
+        cw = correct_word(current_pair)
+        yield cw
         previous_word = current_word
 
 def correct_word(bigram):
-    pass
+    if prob_calc.bi_pd.prob(bigram) > tolerable_prob:
+        return bigram.current
+
+    typo = bigram.current
+    prev = bigram.previous
+
+    dist_filter = dist_calc.make_filter(typo, tolerable_distance)
+    candidates = filter(dist_filter, get_words())
+    b = lambda x: Bigram(previous=prev, current=x)
+    return max(candidates, key=lambda x: prob_calc.bi_pd.prob(b(x)))
+
+
 
 if __name__ == "__main__":
-    _main()
+    main()

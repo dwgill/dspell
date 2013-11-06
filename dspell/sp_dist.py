@@ -50,6 +50,8 @@ class EDCalc(dict):
                 self.cost_nop, self.cost_rem, self.cost_sub)
         return sum(costs) / float(len(values))
 
+    def make_filter(self, string, dist):
+        return lambda x: self[(string, x)] <= dist
 
     def _calc_edit_dist(self, str_src, str_tar):
         len_src = len(str_src)
