@@ -86,7 +86,7 @@ def valid_word(word):
         return False
 
 def main():
-    if 1 < len(sys.argv[1:]) < 2:
+    if len(sys.argv) < 3:
         print("Improper format. Please give mode (file/dir/str) + data")
         return
 
