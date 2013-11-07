@@ -26,18 +26,38 @@ Created on Nov 6, 2013
 '''
 from itertools import islice
 
-def tri_iter(seq, strict=True):
-    first_three = list(islice(seq, 3))
-    if len(first_tree) == 3:
-        first, second, third = first_three
-        yield (first, second, third)
+
+def tri_iter(seq, strictfront=True, strictback=True):
+    seq = seq.__iter__()
+
+    def common_gen(first, second, third, stict):
+        yield first, second, third
         for next_word in seq:
             first, second, third = second, third, next_word
             yield (first, second, third)
-    elif not strict:
-        yield tuple(first_three)
+        else:
+            if not strictback:
+                yield (second, third)
+                yield (third,)
 
-def bi_iter(seq, strict=True):
+    if strictfront:
+        first_three = list(islice(seq, 3))
+        if len(first_three) == 3:
+            first, second, third = first_three
+            for x in common_gen(first, second, third, True):
+                yield x
+
+    else:
+        first = seq.next()
+        yield (first,)
+        second = seq.next()
+        yield (first, second)
+        third = seq.next()
+        for x in common_gen(first, second, third, False):
+            yield x
+
+
+def bi_iter(seq):
     first_two = list(islice(seq, 2))
     if len(first_two) == 2:
         first, second = first_two

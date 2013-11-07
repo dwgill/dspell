@@ -56,27 +56,27 @@ def retrieve_data(path):
     return SGT(fd)
 
 def write_data(fd, path):
-    with open(path) as out:
+    with open(path, "w+") as out:
         for ngram, count in fd.iteritems():
             seq = list(ngram)
             seq.append(str(count))
-            out.write("||".join(seq))
+            out.write("||".join(seq) + '\n')
 
 class ProbCalc(object):
-    def __init__(self, ngram='tri'):
+    def __init__(self, ngram='tri', force_new_data=False):
         ngram = ngram.lower()[:3]
         if ngram not in ngrams.keys():
             raise UnsupportedNgramError(ngram + "grams are not supported.")
 
         data, iterator, self.length = ngrams[ngram]
 
-        if os.path.exists(data):
+        if os.path.exists(data) and not force_new_data:
             self.pd = retrieve_data(data)
         else:
             self.pd = get_sgt(iterator(sp_corpus.process_dir(training_dir)))
             write_data(self.pd.freqdist(), data)
 
-    def prob(x):
+    def prob(self, x):
         if len(x) < self.length:
             raise UnsupportedNgramError("ProbCalc calibrated for ngrams of length " +
                     str(self.length) + ", not " + len(x) + ".")

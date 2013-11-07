@@ -36,6 +36,7 @@ class EDCalc(dict):
         self.cost_sub = cost_sub
         self.cost_flp = cost_flp
         self.cost_nop = cost_nop
+        self.size = 0
 
     def edit_distance(self, str_src, str_tar):
         result = self[(str_src, str_tar)]

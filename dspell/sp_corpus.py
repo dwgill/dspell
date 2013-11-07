@@ -34,14 +34,14 @@ import os
 token_re = r"(\w+'\w+)|(\w+)"
 
 def tokenize(line):
-    was_contraction_last_time = False
+    # was_contraction_last_time = False
     def has_valid_contraction(tup):
         return len(tup[0]) > 0
 
     for matching_tuple in re.findall(token_re, line):
-        if was_contraction_last_time:
-            was_contraction_last_time = False
-            continue
+       # if was_contraction_last_time:
+       #     was_contraction_last_time = False
+       #     continue
 
         string = ""
         if has_valid_contraction(matching_tuple):
