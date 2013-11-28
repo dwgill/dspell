@@ -2,7 +2,7 @@ dspell
 ======
 
 dspell is a rudimentary spell checker written as an educational exercise
-in natural language processing. It can be run by executing any ofthe 
+in natural language processing. It can be run by executing any of the 
 following from the dspell/ directory:
 
     ./sp_correct.py str "your string to correct"
