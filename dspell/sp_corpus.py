@@ -28,21 +28,13 @@ Created on Oct 24, 2013
 import re
 import os
 
-# token_re = r"[a-zA-Z]+('[a-zA-Z]+)?"
-# token_re = r"[^\w((?<=\w)'(?=\w))]"
-# token_re = r"[a-zA-Z(\B'\B)]+"
-token_re = r"(\w+'\w+)|(\w+)"
+_token_re = r"(\w+'\w+)|(\w+)"
 
 def tokenize(line):
-    # was_contraction_last_time = False
     def has_valid_contraction(tup):
         return len(tup[0]) > 0
 
-    for matching_tuple in re.findall(token_re, line):
-       # if was_contraction_last_time:
-       #     was_contraction_last_time = False
-       #     continue
-
+    for matching_tuple in re.findall(_token_re, line):
         string = ""
         if has_valid_contraction(matching_tuple):
             string = matching_tuple[0]

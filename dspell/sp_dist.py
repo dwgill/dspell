@@ -2,8 +2,8 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining 
 # a copy of this software and associated documentation files 
-# including without limitation the rights to use, copy, modify, merge, 
 # (the "Software"), to deal in the Software without restriction, 
+# including without limitation the rights to use, copy, modify, merge, 
 # publish, distribute, sublicense, and/or sell copies of the Software, 
 # and to permit persons to whom the Software is furnished to do so, 
 # subject to the following conditions:
@@ -25,31 +25,30 @@ Created on Oct 24, 2013
 @author: Daniel Gill
 '''
 
-costs = {'rem' : 2, 'sub' : 3, 'add' : 2, 'flp' : 3, 'nop' : 0.0}
+_costs = {'rem' : 2, 'sub' : 3, 'add' : 2, 'flp' : 3, 'nop' : 0.0}
 
 class EDCalc(dict):
-    def __init__(self, cost_add = costs['add'], cost_rem = costs['rem'],
-            cost_sub = costs['sub'], cost_flp = costs['flp'],
-            cost_nop = costs['nop']):
+    def __init__(self, cost_add = _costs['add'], cost_rem = _costs['rem'],
+            cost_sub = _costs['sub'], cost_flp = _costs['flp'],
+            cost_nop = _costs['nop']):
         self.cost_add = cost_add
         self.cost_rem = cost_rem
         self.cost_sub = cost_sub
         self.cost_flp = cost_flp
         self.cost_nop = cost_nop
-        self.size = 0
 
-    def edit_distance(self, str_src, str_tar):
+    def edit_distance(self, str_src, str_tar, clear_after=False):
+        """
+        Return the damerau-levenshtein distance between the two strings.
+        """
         result = self[(str_src, str_tar)]
+        if clear_after:
+            self.clear()
         return result
 
     def __missing__(self, key):
         result = self[key] = self._calc_edit_dist(*key)
         return result
-
-    def avg_cost(self):
-        costs = (self.cost_add, self.cost_flp, 
-                self.cost_nop, self.cost_rem, self.cost_sub)
-        return sum(costs) / float(len(values))
 
     def make_filter(self, string, dist):
         return lambda x: self[(string, x)] <= dist

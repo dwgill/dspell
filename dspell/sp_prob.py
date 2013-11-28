@@ -32,18 +32,20 @@ import sp_corpus
 import os
 import sp_itertools
 
-training_dir = "./res/training_data/"
-tri_data  = "./res/trigrams.txt"
-bi_data = "./res/bigrams.txt"
-uni_data = "./res/unigrams.txt"
+_pjoin = lambda x: os.path.join(os.path.join('.', 'res'), x)
+_training_dir = _pjoin('training_data')
+_tri_data  = _pjoin("trigrams.txt")
+_bi_data = _pjoin("bigrams.txt")
+_uni_data = _pjoin("unigrams.txt")
 
-ngrams = {'uni':(uni_data, sp_itertools.uni_iter, 1), 'bi':(bi_data, sp_itertools.bi_iter, 2), 'tri':(tri_data, sp_itertools.tri_iter, 3)}
+_ngrams = {'uni':(_uni_data, sp_itertools.uni_iter, 1), 'bi':(_bi_data, sp_itertools.bi_iter, 2), 'tri':(_tri_data, sp_itertools.tri_iter, 3)}
 
 
 def get_sgt(seq):
     fd = FD()
     for ngram in seq:
         fd.inc(ngram)
+
     return SGT(fd)
 
 def retrieve_data(path):
@@ -53,6 +55,7 @@ def retrieve_data(path):
             split_data = line.split("||")
             freq = split_data.pop()
             fd.inc(tuple(split_data), int(freq))
+
     return SGT(fd)
 
 def write_data(fd, path):
@@ -65,25 +68,26 @@ def write_data(fd, path):
 class ProbCalc(object):
     def __init__(self, ngram='tri', force_new_data=False):
         ngram = ngram.lower()[:3]
-        if ngram not in ngrams.keys():
+        if ngram not in _ngrams.keys():
             raise UnsupportedNgramError(ngram + "grams are not supported.")
 
-        data, iterator, self.length = ngrams[ngram]
-
+        data, iterator, self.length = _ngrams[ngram]
         if os.path.exists(data) and not force_new_data:
             self.pd = retrieve_data(data)
         else:
-            self.pd = get_sgt(iterator(sp_corpus.process_dir(training_dir)))
+            self.pd = get_sgt(iterator(sp_corpus.process_dir(_training_dir)))
             write_data(self.pd.freqdist(), data)
 
     def prob(self, x):
         if len(x) < self.length:
             raise UnsupportedNgramError("ProbCalc calibrated for ngrams of length " +
                     str(self.length) + ", not " + len(x) + ".")
+
         return self.pd.prob(tuple(x))
 
 class UnsupportedNgramError(Exception):
     def __init__(self, value):
         self.value = value
+
     def __str__(self):
         return repr(self.value)

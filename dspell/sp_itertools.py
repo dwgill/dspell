@@ -26,8 +26,15 @@ Created on Nov 6, 2013
 '''
 from itertools import islice
 
-
-def tri_iter(seq, strictfront=True, strictback=True):
+def tri_iter(seq, strict_front=True, strict_back=True):
+    """
+    Given a sequence of values, generate a sequences of trigrams
+    corresponding to that sequence.
+    If strict_front is set to False, then the first two provided generated
+    elements of the sequences will be a unigram and bigram corresponding
+    to the first two elements of the provided sequence. Similarly with
+    strict_back.
+    """
     seq = seq.__iter__()
 
     def common_gen(first, second, third, stict):
@@ -36,11 +43,11 @@ def tri_iter(seq, strictfront=True, strictback=True):
             first, second, third = second, third, next_word
             yield (first, second, third)
         else:
-            if not strictback:
+            if not strict_back:
                 yield (second, third)
                 yield (third,)
 
-    if strictfront:
+    if strict_front:
         first_three = list(islice(seq, 3))
         if len(first_three) == 3:
             first, second, third = first_three
