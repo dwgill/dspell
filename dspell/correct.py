@@ -26,16 +26,15 @@ Crated on Oct 15, 2013
 """
 
 from collections import namedtuple
-import itertools
 import os
 import sys
-import sp_corpus, sp_prob, sp_dist, sp_itertools
+import corpus, prob, dist, ngram_iter
 
-_ed_calc = sp_dist.EDCalc()
+_ed_calc = dist.EDCalc()
 _num_candidates_per_word = 50
-_tri_pcalc = sp_prob.ProbCalc(ngram='tri')
-_bi_pcalc = sp_prob.ProbCalc(ngram='bi')
-_uni_pcalc = sp_prob.ProbCalc(ngram='uni')
+_tri_pcalc = prob.ProbCalc(ngram='tri')
+_bi_pcalc = prob.ProbCalc(ngram='bi')
+_uni_pcalc = prob.ProbCalc(ngram='uni')
 
 def get_wordset():
     """
@@ -73,14 +72,14 @@ def _main():
             print('provided path is not to a file.')
             return
         else:
-            print_words(correct_words(sp_corpus.process_file(data)))
+            print_words(correct_words(corpus.process_file(data)))
 
     # Data given is directory path.
     elif mode == 'dir':
         if not os.path.isdir(data):
             print('provided path is not to a directory.')
         else:
-            print_words(correct_words(sp_corpus.process_dir(data)))
+            print_words(correct_words(corpus.process_dir(data)))
 
     # Data given is string.
     elif mode == 'str':
@@ -98,14 +97,14 @@ def correct_string(string):
     """
     Correct the spelling of a string of words.
     """
-    return print_words(correct_words(sp_corpus.tokenize(string)))
+    return print_words(correct_words(corpus.tokenize(string)))
 
 def correct_words(words):
     """
     Replace any improperly spelled words in the provided sequence with
     correctly spelled words most probable to occur in that context.
     """
-    trigrams = sp_itertools.tri_iter(words)
+    trigrams = ngram_iter.tri_iter(words)
 
     first_keyf = lambda trigram: (lambda x: 
             _tri_pcalc.prob((x, trigram[1], trigram[2])))

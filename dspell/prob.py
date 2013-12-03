@@ -28,9 +28,9 @@ Created on Nov 2, 2013
 import nltk
 from nltk.probability import FreqDist as FD
 from nltk.probability import SimpleGoodTuringProbDist as SGT
-import sp_corpus
+import corpus
 import os
-import sp_itertools
+import ngram_iter
 
 _pjoin = lambda x: os.path.join(os.path.join('.', 'res'), x)
 _training_dir = _pjoin('training_data')

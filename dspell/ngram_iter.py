@@ -63,7 +63,6 @@ def tri_iter(seq, strict_front=True, strict_back=True):
         for x in common_gen(first, second, third, False):
             yield x
 
-
 def bi_iter(seq):
     first_two = list(islice(seq, 2))
     if len(first_two) == 2:
