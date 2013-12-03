@@ -62,18 +62,3 @@ def tri_iter(seq, strict_front=True, strict_back=True):
         third = seq.next()
         for x in common_gen(first, second, third, False):
             yield x
-
-def bi_iter(seq):
-    first_two = list(islice(seq, 2))
-    if len(first_two) == 2:
-        first, second = first_two
-        yield (first, second)
-        for next_word in seq:
-            first, second = second, next_word
-            yield first, second
-    elif not strict:
-        yield tuple(first_two)
-
-def uni_iter(seq):
-    for item in seq:
-        yield (item,)

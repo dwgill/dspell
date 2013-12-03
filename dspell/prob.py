@@ -32,13 +32,13 @@ import corpus
 import os
 import ngram_iter
 
-_pjoin = lambda x: os.path.join(os.path.join('.', 'res'), x)
-_training_dir = _pjoin('training_data')
-_tri_data  = _pjoin("trigrams.txt")
-_bi_data = _pjoin("bigrams.txt")
-_uni_data = _pjoin("unigrams.txt")
+pjoin = lambda x: os.path.join(os.path.join('.', 'res'), x)
+training_dir = pjoin('training_data')
+tri_data  = pjoin("trigrams.txt")
+bi_data = pjoin("bigrams.txt")
+uni_data = pjoin("unigrams.txt")
 
-_ngrams = {'uni':(_uni_data, sp_itertools.uni_iter, 1), 'bi':(_bi_data, sp_itertools.bi_iter, 2), 'tri':(_tri_data, sp_itertools.tri_iter, 3)}
+ngram = {'uni':(uni_data, sp_itertools.uni_iter, 1), 'bi':(bi_data, sp_itertools.bi_iter, 2), 'tri':(tri_data, sp_itertools.tri_iter, 3)}
 
 
 def get_sgt(seq):
@@ -68,14 +68,14 @@ def write_data(fd, path):
 class ProbCalc(object):
     def __init__(self, ngram='tri', force_new_data=False):
         ngram = ngram.lower()[:3]
-        if ngram not in _ngrams.keys():
+        if ngram not in ngram.keys():
             raise UnsupportedNgramError(ngram + "grams are not supported.")
 
-        data, iterator, self.length = _ngrams[ngram]
+        data, iterator, self.length = ngram[ngram]
         if os.path.exists(data) and not force_new_data:
             self.pd = retrieve_data(data)
         else:
-            self.pd = get_sgt(iterator(sp_corpus.process_dir(_training_dir)))
+            self.pd = get_sgt(iterator(sp_corpus.process_dir(training_dir)))
             write_data(self.pd.freqdist(), data)
 
     def prob(self, x):

@@ -30,18 +30,18 @@ import os
 import sys
 import corpus, prob, dist, ngram_iter
 
-_ed_calc = dist.EDCalc()
-_num_candidates_per_word = 50
-_tri_pcalc = prob.ProbCalc(ngram='tri')
-_bi_pcalc = prob.ProbCalc(ngram='bi')
-_uni_pcalc = prob.ProbCalc(ngram='uni')
+ed_calc = dist.EDCalc()
+num_candidates_per_word = 50
+tri_pcalc = prob.ProbCalc(ngram='tri')
+bi_pcalc = prob.ProbCalc(ngram='bi')
+uni_pcalc = prob.ProbCalc(ngram='uni')
 
 def get_wordset():
     """
     Iterate over the types of words encountered in the
     training data.
     """
-    for word in _uni_pcalc.pd.freqdist().keys():
+    for word in uni_pcalc.pd.freqdist().keys():
         yield word[0]
 
 def valid_word(word):
@@ -52,8 +52,7 @@ def valid_word(word):
     for other_word in get_wordset():
         if word == other_word:
             return True
-    else:
-        return False
+    return False
 
 def _main():
     """
@@ -107,9 +106,9 @@ def correct_words(words):
     trigrams = ngram_iter.tri_iter(words)
 
     first_keyf = lambda trigram: (lambda x: 
-            _tri_pcalc.prob((x, trigram[1], trigram[2])))
+            tri_pcalc.prob((x, trigram[1], trigram[2])))
     second_keyf = lambda trigram: (lambda x: 
-            _tri_pcalc.prob((trigram[0], x, trigram[2])))
+            tri_pcalc.prob((trigram[0], x, trigram[2])))
     first_trigram = None
 
     try:
@@ -148,10 +147,9 @@ def correct_unigram(unigram):
     """
     first = unigram[0]
     if not valid_word(first):
-        candidates = find_first_n_words_under_dist(first, _num_candidates_per_word)
-        keyf = lambda x: _uni_pcalc.prob((x,))
+        candidates = find_first_n_words_under_dist(first, num_candidates_per_word)
+        keyf = lambda x: uni_pcalc.prob((x,))
         return max(candidates, key=keyf)
-
     else:
         return first
 
@@ -164,19 +162,18 @@ def correct_bigram(bigram, index_to_check=1):
     word_to_check = bigram(index_to_check)
     if not valid_word(word_to_check):
         if index_to_check == 0:
-            keyf = lambda bigram: lambda x: _bi_pcalc.prob((bigram[0], x))
+            keyf = lambda bigram: lambda x: bi_pcalc.prob((bigram[0], x))
         else:
-            keyf = lambda bigram: lambda x: _bi_pcalc.prob((x, bigram[1]))
+            keyf = lambda bigram: lambda x: bi_pcalc.prob((x, bigram[1]))
 
-        candidates = find_first_n_words_under_dist(word_to_check, _num_candidates_per_word)
+        candidates = find_first_n_words_under_dist(word_to_check, num_candidates_per_word)
         return max(candidates, key=keyf(bigram))
-
     else:
         return word_to_check
 
-_keyf_standard = lambda trigram: lambda x: _tri_pcalc.prob((trigram[0], trigram[1], x))
+keyf_standard = lambda trigram: lambda x: tri_pcalc.prob((trigram[0], trigram[1], x))
 
-def correct_trigram(trigram, index_to_check=2, keyf=_keyf_standard):
+def correct_trigram(trigram, index_to_check=2, keyf=keyf_standard):
     """
     Return a trigram equal to the provided trigram but with
     trigram[index_to_check] replaced with a word
@@ -185,27 +182,27 @@ def correct_trigram(trigram, index_to_check=2, keyf=_keyf_standard):
     word_to_check = trigram[index_to_check]
 
     if not valid_word(word_to_check):
-        candidates = find_first_n_words_under_dist(word_to_check, _num_candidates_per_word)
+        candidates = find_first_n_words_under_dist(word_to_check, num_candidates_per_word)
         return max(candidates, key=keyf(trigram))
     else:
         return word_to_check
 
-_acceptable_distance = 4
+acceptable_distance = 4
 def find_first_n_words_under_dist(word, n):
     """
     Return the n words most frequently encountered in the training
     data that demonstrate a levenshtein distance to the provided word
-    equal to or less than _acceptable_distance.
+    equal to or less than acceptable_distance.
     """
     candidates = []
     for candidate in get_wordset():
         if len(candidates) > n:
             break
         else:
-            if _ed_calc[(word, candidate)] <= _acceptable_distance:
+            if ed_calc[(word, candidate)] <= acceptable_distance:
                 candidates.append(candidate)
 
-    _ed_calc.clear()
+    ed_calc.clear()
     return candidates
 
 if __name__ == "__main__":

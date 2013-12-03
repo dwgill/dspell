@@ -28,13 +28,13 @@ Created on Oct 24, 2013
 import re
 import os
 
-_token_re = r"(\w+'\w+)|(\w+)"
+token_re = r"(\w+'\w+)|(\w+)"
 
 def tokenize(line):
     def has_valid_contraction(tup):
         return len(tup[0]) > 0
 
-    for matching_tuple in re.findall(_token_re, line):
+    for matching_tuple in re.findall(token_re, line):
         string = ""
         if has_valid_contraction(matching_tuple):
             string = matching_tuple[0]
