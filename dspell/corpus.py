@@ -38,7 +38,6 @@ def tokenize(line):
         string = ""
         if has_valid_contraction(matching_tuple):
             string = matching_tuple[0]
-            was_contraction_last_time = True
         else:
             string = matching_tuple[1]
 
